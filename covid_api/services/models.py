@@ -1,5 +1,5 @@
 from sqlalchemy import Table,Column,Integer,String,Date,DateTime
-from config.db import meta
+from config import meta
 
 users=Table(
     'users',meta,

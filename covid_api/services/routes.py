@@ -1,12 +1,14 @@
 from fastapi import APIRouter
-from config.db import conn
-from models.index import users
-from schemas.index import User
+
+from config import conn
+from models import users
+from schemas import User
 from fastapi.responses import JSONResponse
 
-user=APIRouter()
 
-@user.get("/countries")
+app=APIRouter()
+
+@app.get("/countries")
 async def country():
     try:
         country= "(SELECT country FROM users)"
@@ -27,7 +29,7 @@ async def country():
         return {"Error":str(Err)}
 
 
-@user.get("/statistics")
+@app.get("/statistics")
 async def statistics():
     try:
         statistics= "(SELECT * FROM users)"
@@ -88,7 +90,7 @@ async def statistics():
             "response": []      
         }
 
-@user.get("/statisticss/{country}")
+@app.get("/statisticss/{country}")
 async def statistics_paricularly_one(country:str):
     try:
         statisticss= f"(SELECT * FROM users WHERE country='{country}')"
@@ -152,7 +154,7 @@ async def statistics_paricularly_one(country:str):
             "response": []      
         }
 
-@user.get("/history/country/{country}&date/{Date}")
+@app.get("/history/country/{country}&date/{Date}")
 async def history(country,date):
     try:
         statisticss= f"(SELECT * FROM users WHERE country='{country}' && date='{date}')"
