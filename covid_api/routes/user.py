@@ -5,7 +5,7 @@ from schemas.index import User
 from fastapi.responses import JSONResponse
 
 user=APIRouter()
-
+# countries-end point
 @user.get("/countries")
 async def country():
     try:
@@ -26,7 +26,7 @@ async def country():
     except Exception as Err:
         return {"Error":str(Err)}
 
-
+# statistics-end point
 @user.get("/statistics")
 async def statistics():
     try:
@@ -152,6 +152,7 @@ async def statistics_paricularly_one(country:str):
             "response": []      
         }
 
+# history-end point
 @user.get("/history/country/{country}&date/{Date}")
 async def history(country,date):
     try:
