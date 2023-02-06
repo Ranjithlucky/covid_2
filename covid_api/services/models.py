@@ -1,24 +1,25 @@
 from sqlalchemy import Table,Column,Integer,String,Date,DateTime
-from config import meta
+from sqlalchemy.orm import relationship
+from database import Base
 
-users=Table(
-    'users',meta,
-    Column('id',Integer,primary_key=True),
-    Column('continent',String(255)),
-    Column('country',String(255)),
-    Column('population',Integer),
-    Column('new',Integer),
-    Column('active',Integer),
-    Column('critical',Integer),
-    Column('recovered',Integer),
-    Column('IM_pop',Integer),
-    Column('total',Integer),
-    Column('New_deaths',Integer),
-    Column('IM_pop_deaths',Integer),
-    Column('total_deaths',Integer),
-    Column('IM_pop_tests',Integer),
-    Column('total_tests',Integer),
-    Column('Date',Date),
-    Column('DateTime',DateTime)
+class Users(Base):
+    __tablename__="users"
 
-)
+    id=Column(Integer,primary_key=True)
+    continent=Column(String(255))
+    country=Column(String(255))
+    population=Column(Integer)
+    new=Column(Integer)
+    active=Column(Integer)
+    critical=Column(Integer)
+    recovered=Column(Integer)
+    IM_pop=Column(Integer)
+    total=Column(Integer)
+    New_deaths=Column(Integer)
+    IM_pop_deaths=Column(Integer)
+    total_deaths=Column(Integer)
+    IM_pop_tests=Column(Integer)
+    total_tests=Column(Integer)
+    Date=Column(Integer)
+    DateTime=Column(Integer)
+
