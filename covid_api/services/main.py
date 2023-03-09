@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Depends
 from sqlalchemy.orm import Session
-from models import Users
+from models import Country,Statistics,History
 from schemas import User
 import models
 import schemas
