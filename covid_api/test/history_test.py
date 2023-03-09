@@ -1,14 +1,18 @@
-from fastapi.responses import JSONResponse,requests
-ENDPOINT_2='http://127.0.0.1:8000/history/country/Afghanistan&date/{Date}?date=2023-01-18'
+from fastapi.testclient import TestClient
+from app.main import app
 
-return_data = ENDPOINT_2
+client = TestClient(app)
 
 def test_get_history():
-    response = requests.get(ENDPOINT_2)
+    
+    response = client.get("/history/country/US&date/2022-01-01")
     assert response.status_code == 200
+    assert len(response.json()["response"]) > 0
 
-def test_get_countries_Notfound():
-    response = requests.get(ENDPOINT_2)
+    #  no data exists
+    response = client.get("/history/country/Canada&date/2022-01-00")
     assert response.status_code == 404
-    assert  JSONResponse(content={"Message" : "No data found"})
-
+    assert response.json() == {
+        "Message": "No data found"
+    }
+}
