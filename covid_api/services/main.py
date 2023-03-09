@@ -24,7 +24,7 @@ def get_db():
 async def country(db:Session=Depends(get_db)):
     try:
          
-        execute_query=db.query(country.country).all()
+        execute_query=db.query(Users.country).all()
         country_data=execute_query
         if len(country_data) == 0:
             return JSONResponse(status_code=404, content={"Message" : "No data found"})
@@ -41,7 +41,7 @@ async def country(db:Session=Depends(get_db)):
 @app.get("/statistics")
 async def statistics(db:Session=Depends(get_db)):
     try:
-        execute_query=db.query(Statistics).all()
+        execute_query=db.query(Users).all()
         country_data=execute_query
         list_of_data = []
         for i in country_data:
@@ -91,7 +91,7 @@ async def statistics(db:Session=Depends(get_db)):
 async def statistics_paricularly_one(country:str,db:Session=Depends(get_db)):
     try:
         
-        execet_query=db.query(Statistics.country).fetchall()
+        execet_query=db.query(Users.country).fetchall()
         country_data=execet_query
         list_of_data = []
         for i in country_data:
@@ -143,7 +143,7 @@ async def statistics_paricularly_one(country:str,db:Session=Depends(get_db)):
 async def history(country,date,db:Session=Depends(get_db)):
     try:
         
-        execet_query=db.query(History.country,date).fetchall()
+        execet_query=db.query(Users.country,date).fetchall()
         country_data=execet_query
         
 
