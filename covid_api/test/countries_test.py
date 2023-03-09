@@ -1,11 +1,24 @@
-from fastapi.responses import JSONResponse,requests
-ENDPOINT='http://127.0.0.1:8000/countries'
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
 
 def test_get_countries():
-    response = requests.get(ENDPOINT)
+    # Test case where data exists
+    response = client.get("/countries")
     assert response.status_code == 200
+    assert response.json() == {
+        "get": "countries",
+        "parameters": [],
+        "errors": [],
+        "results": len(response.json()["response"]),
+        "response": ["Country1", "Country2", "Country3"] # replace with actual countries retrieved from database
+    }
 
-def test_get_countries_Notfound():
-    response = requests.get(ENDPOINT)
+    # Test case where no data exists
+    # Replace this with actual test case by mocking the database query
+    response = client.get("/countries")
     assert response.status_code == 404
-    assert  JSONResponse(content={"Message" : "No data found"})
+    assert response.json() == {
+        "Message": "No data found"
+    }
