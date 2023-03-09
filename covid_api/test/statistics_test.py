@@ -1,26 +1,49 @@
-from fastapi.responses import JSONResponse,requests
-ENDPOINT_1='http://127.0.0.1:8000/statistics'
-ENDPOINT_2='http://127.0.0.1:8000/statisticss/country/Afghanistan'
 
-return_data = ENDPOINT_1
-return_data = ENDPOINT_2
+from fastapi.testclient import TestClient
 
-def test_get_statistics():
-    response = requests.get(ENDPOINT_1)
+from app.main import app
+
+client = TestClient(app)
+
+def test_get_statistics_success():
+    response = client.get("/statistics")
     assert response.status_code == 200
-    assert return_data 
-
-def test_get_countries_Notfound():
-    response = requests.get(ENDPOINT_1)
+    assert response.json() == {
+        "get": "statistics",
+        "parameters": [],
+        "errors": [],
+        "results": len(db.query(Users).all()),
+        "response": [ 
+            {
+                "continent": "Europe",
+                "country": "Germany",
+                "population": 83000000,
+                "cases": {
+                    "new": 3000,
+                    "active": 5000,
+                    "critical": 300,
+                    "recovered": 10000,
+                    "IM_pop": 4000,
+                    "total": 20000
+                },
+                "deaths": {
+                    "New_deaths": 50,
+                    "IM_pop_deaths": 500,
+                    "total_deaths": 1000
+                },
+                "tests": {
+                    "IM_pop_tests": 3000,
+                    "total_tests": 100000
+                },
+                "day": "2022-01-01",
+                "time": "12:00:00"
+            },
+            
+        ]
+    } 
+    #  no data exist
+    response = client.get("/statistics")
     assert response.status_code == 404
-    assert  JSONResponse(content={"Message" : "No data found"})
-
-def test_get_statistics():
-    response = requests.get(ENDPOINT_2)
-    assert response.status_code == 200
-    assert return_data 
-
-def test_get_countries_Notfound():
-    response = requests.get(ENDPOINT_2)
-    assert response.status_code == 404
-    assert  JSONResponse(content={"Message" : "No data found"})
+    assert response.json() == {
+        "Message": "No data found"
+    }
