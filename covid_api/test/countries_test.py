@@ -11,8 +11,8 @@ def test_get_countries():
         "get": "countries",
         "parameters": [],
         "errors": [],
-        "results": len(response.json()["response"]),
-        "response": ["Country1", "Country2", "Country3"] # replace with actual countries retrieved from database
+        "results": contry_count,
+        "response" : list_of_data})
     }
 
     # Test case where no data exists
