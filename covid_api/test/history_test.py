@@ -9,7 +9,7 @@ def test_get_history():
     assert response.status_code == 200
     assert len(response.json()["response"]) > 0
 
-    #  no data exists
+    #  no data exist
     response = client.get("/history/country/Canada&date/2022-01-00")
     assert response.status_code == 404
     assert response.json() == {
