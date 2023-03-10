@@ -19,22 +19,21 @@ def get_db():
         db.close()
 
 
-
 @app.get("/countries")
-async def country(db:Session=Depends(get_db)):
+async def country(db: Session = Depends(get_db)):
     try:
-         
-        execute_query=db.query(Country.country).all()
-        country_data=execute_query
-        if len(country_data) == 0:
-            return JSONResponse(status_code=404, content={"Message" : "No data found"})
-        list_of_data = []
-        for i in country_data:
-            list_of_data.append(i['country'])
-        contry_count = len(country_data)            
-        return JSONResponse(status_code=200, content={ "get": "countries","parameters": [],"errors": [],"results": contry_count,"response" : list_of_data})
-    except:
-        return response_model
+        execute_query = db.query(Country.country).all()
+        country_data = [country.country for country in execute_query]
+        country_count = len(country_data)
+        return JSONResponse(status_code=200, content={
+            "get": "countries",
+            "parameters": [],
+            "errors": [],
+            "results": country_count,
+            "response": country_data
+        })
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "Internal server error"})
     
 
 
@@ -79,8 +78,7 @@ async def statistics(db:Session=Depends(get_db)):
             "response": list_of_data            
         }    
 
-        if len(country_data) == 0:
-            return JSONResponse(status_code=404, content={"Message"})                                                     
+                                                             
         return return_data
 
 
