@@ -143,8 +143,6 @@ async def history(country,date,db:Session=Depends(get_db)):
         
         execet_query=db.query(History.country,date).fetchall()
         country_data=execet_query
-        
-
         list_of_data = []
         for i in country_data:
             res = {
