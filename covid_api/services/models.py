@@ -3,14 +3,14 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class Country(Base):
-    __tablename__="users"
+    __tablename__="country"
 
     id=Column(Integer,primary_key=True)
-    continent=Column(String(255))
+    country=Column(String(255))
     
 
 class Statistics(Base):
-    __tablename__="users"
+    __tablename__="statistics"
 
     id=Column(Integer,primary_key=True)
     continent=Column(String(255))
@@ -31,7 +31,7 @@ class Statistics(Base):
     DateTime=Column(Integer)
 
 class History(Base):
-    __tablename__="users"
+    __tablename__="history"
 
     id=Column(Integer,primary_key=True)
     continent=Column(String(255))
