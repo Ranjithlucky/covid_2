@@ -69,7 +69,7 @@ def response_model():
     return {
         "get": "statistics",
         "parameters": {
-            "country": ""
+            "country": " "
         },
         "errors": {
             "country": "The country field cannot be empty"
@@ -100,7 +100,7 @@ async def statistics(country: str , db: Session = Depends(get_db)):
     try:
         statisticss_data = db.query(Statistics).filter(Statistics.country == country).all()
         return_data = {            
-            "get": "statistics",
+            "get": "statisticss",
             "parameters": {
                 "country": country
             },
@@ -116,10 +116,11 @@ async def statistics(country: str , db: Session = Depends(get_db)):
 
 @app.get("/history/country/{country}&date/{date}")
 async def history(country,date,db: Session = Depends(get_db)):
-   try:
-        history_data = db.query(models.History).filter(History.country == country).all()
+    
+    try:
+        history_data = db.query(History).filter(History.country == country).all()
         return_data = {            
-            "get": "statistics",
+            "get": "history",
             "parameters": {
                 "country": country,
                 "date": date
@@ -130,5 +131,5 @@ async def history(country,date,db: Session = Depends(get_db)):
         }    
         return return_data
     except Exception as Err:
-        return response_model()     
+        return "History cannot be find OUT"   
         
