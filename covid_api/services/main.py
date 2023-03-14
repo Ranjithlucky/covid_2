@@ -1,11 +1,12 @@
 from fastapi import FastAPI,Depends
 from sqlalchemy.orm import Session
-from models import Country,Statistics,History
 from schemas import User
-import models
+from models import Country,Statistics,History
 import schemas
+import models
 from fastapi.responses import JSONResponse
 from database import SessionLocal,engine
+from typing import List
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -17,8 +18,7 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
+# COUNTRY -ENDPOINT
 @app.get("/countries")
 async def country(db: Session = Depends(get_db)):
     try:
@@ -34,172 +34,101 @@ async def country(db: Session = Depends(get_db)):
         })
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "Internal server error"})
-    
+#COMMON NESTED LOOP FUNCTION
+def Covid_func(Covid_data):
+    list_of_data = []
+    for i in Covid_data:
+        res = {
+            "continent": i.continent,
+            "country": i.country,
+            "population": i.population,
+            "cases": {
+                "new": i.new,
+                "active": i.active,
+                "critical": i.critical,
+                "recovered": i.recovered,
+                "IM_pop": i.IM_pop,
+                "total": i.total
+            },
+            "deaths": {
+                "New_deaths": i.New_deaths,
+                "IM_pop_deaths": i.IM_pop_deaths,
+                "total_deaths": i.total_deaths
+            },
+            "tests": {
+                "IM_pop_tests": i.IM_pop_tests,
+                "total_tests": i.total_tests
+            },
+            "day": i.date,
+            "time": i.datetime
+        }
+        list_of_data.append(res)
+    return list_of_data
 
+def response_model():
+    return {
+        "get": "statistics",
+        "parameters": {
+            "country": ""
+        },
+        "errors": {
+            "country": "The country field cannot be empty"
+        },
+        "results": 0,
+        "response": []
+    }
+
+#STATISTICS-ENDPOINT
 
 @app.get("/statistics")
-async def statistics(db:Session=Depends(get_db)):
+async def statistics(db: Session = Depends(get_db)):
     try:
-        execute_query=db.query(Statistics).all()
-        country_data=execute_query
-        list_of_data = []
-        for i in country_data:
-            res = {
-                "continent": i['continent'],
-                "country": i['country'],
-                "population": i['population'],
-                "cases": {
-                    "new": i['new'],
-                    "active": i['active'],
-                    "critical": i['critical'],
-                    "recovered": i['recovered'],
-                    "IM_pop": i['IM_pop'],
-                    "total": i['total']
-                },
-                "deaths": {
-                    "New_deaths": i['New_deaths'],
-                    "IM_pop_deaths": i['Im_pop_deaths'],
-                    "total_deaths": i['total_deaths']
-                },
-                "tests": {
-                    "IM_pop_tests": i['IM_pop_tests'],
-                    "total_tests": i['total_tests']
-                },
-                "day": i['Date'],
-                "time": i['DateTime']
-                }
-            list_of_data.append(res)
-        contry_count = len(country_data)                
+        statistics_data = db.query(Statistics).all()
         return_data = {            
             "get": "statistics",
             "parameters": [],
             "errors": [],
-            "results": contry_count,
-            "response": list_of_data            
+            "results": len(statistics_data),
+            "response": Covid_func(statistics_data)           
         }    
-
-                                                             
         return return_data
-
-
-    except Exception as  Err:
-        return response_model
-
+    except Exception as Err:
+        return response_model()
+        
 @app.get("/statisticss/{country}")
-async def statistics_paricularly_one(country:str,db:Session=Depends(get_db)):
+async def statistics(country: str , db: Session = Depends(get_db)):
     try:
-        
-        execet_query=db.query(Statistics.country).fetchall()
-        country_data=execet_query
-        list_of_data = []
-        for i in country_data:
-            res = {
-                "continent": i['continent'],
-                "country": i['country'],
-                "population": i['population'],
-                "cases": {
-                    "new": i['new'],
-                    "active": i['active'],
-                    "critical": i['critical'],
-                    "recovered": i['recovered'],
-                    "IM_pop": i['IM_pop'],
-                    "total": i['total']
-                },
-                "deaths": {
-                    "New_deaths": i['New_deaths'],
-                    "IM_pop_deaths": i['Im_pop_deaths'],
-                    "total_deaths": i['total_deaths']
-                },
-                "tests": {
-                    "IM_pop_tests": i['IM_pop_tests'],
-                    "total_tests": i['total_tests']
-                },
-                "day": i['Date'],
-                "time": i['DateTime']
-                }
-            list_of_data.append(res)
-        contry_count = len(country_data)                
+        statisticss_data = db.query(Statistics).filter(Statistics.country == country).all()
         return_data = {            
             "get": "statistics",
             "parameters": {
-                "country": i['country']
+                "country": country
             },
             "errors": [],
-            "results": contry_count,
-            "response": list_of_data            
+            "results": len(statisticss_data),
+            "response": Covid_func(statisticss_data)           
         }    
-
-        if len(country_data) == 0:
-            return JSONResponse(status_code=404, content={"Message"})                                                     
         return return_data
+    except Exception as Err:
+        return response_model() 
 
+#HISTORY-END POINT 
 
-    except Exception as  Err:
-        return response_model
-
-@app.get("/history/country/{country}&date/{Date}")
-async def history(country,date,db:Session=Depends(get_db)):
-    try:
-        
-        execet_query=db.query(History.country,date).fetchall()
-        country_data=execet_query
-        list_of_data = []
-        for i in country_data:
-            res = {
-                "continent": i['continent'],
-                "country": i['country'],
-                "population": i['population'],
-                "cases": {
-                    "new": i['new'],
-                    "active": i['active'],
-                    "critical": i['critical'],
-                    "recovered": i['recovered'],
-                    "IM_pop": i['IM_pop'],
-                    "total": i['total']
-                },
-                "deaths": {
-                    "New_deaths": i['New_deaths'],
-                    "IM_pop_deaths": i['Im_pop_deaths'],
-                    "total_deaths": i['total_deaths']
-                },
-                "tests": {
-                    "IM_pop_tests": i['IM_pop_tests'],
-                    "total_tests": i['total_tests']
-                },
-                "day": i['Date'],
-                "time": i['DateTime']
-                }
-            list_of_data.append(res)
-        contry_count = len(country_data)                
+@app.get("/history/country/{country}&date/{date}")
+async def history(country,date,db: Session = Depends(get_db)):
+   try:
+        history_data = db.query(models.History).filter(History.country == country).all()
         return_data = {            
-            "get": "History",
-            "parameters": {
-                "country": i['country'],
-                "day": i['Date']
-            },
-            "errors": [],
-            "results": contry_count,
-            "response": list_of_data            
-        }    
-
-        if len(country_data) == 0:
-            return JSONResponse(status_code=404, content={"Message"})                                                     
-        return return_data
-
-
-    except Exception as  Err:
-        return response_model
-        
-def response_model():
-    return{
             "get": "statistics",
             "parameters": {
-                "country": ""
+                "country": country,
+                "date": date
             },
-            "errors": {
-                "country":"The country field cannot be field ,it as an empty"
-            },
-            "results": 0,
-            "response": []      
-        }
-    
+            "errors": [],
+            "results": len(history_data),
+            "response":Covid_func(history_data)           
+        }    
+        return return_data
+    except Exception as Err:
+        return response_model()     
+        
